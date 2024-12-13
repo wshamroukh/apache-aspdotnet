@@ -16,16 +16,16 @@ cat <<EOF > $cloudinit_file
 #cloud-config
 runcmd:
   - apt update && apt-get install -y dotnet-sdk-8.0 apache2 git
-  - git clone https://github.com/jelledruyts/InspectorGadget /var/www/InspectorGadget
-  - mv /var/www/InspectorGadget/WebApp /var/www/ && rm -rf /var/www/InspectorGadget
-  - cd /etc/systemd/system/ && curl -O https://raw.githubusercontent.com/wshamroukh/apache-aspdotnet/refs/heads/main/inspectorg.service
   - mv /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf.bak
   - mv /etc/apache2/sites-enabled/000-default.conf /etc/apache2/sites-enabled/000-default.conf.bak
   - cd /etc/apache2/sites-available/ && curl -O https://raw.githubusercontent.com/wshamroukh/apache-aspdotnet/refs/heads/main/000-default.conf
   - ln -s /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-enabled/000-default.conf
-  - systemctl enable inspectorg && systemctl start inspectorg
-  - a2enmod proxy && a2enmod headers && a2enmod proxy_http && /etc/init.d/apache2 restart && apachectl configtest
-  - reboot
+  - a2enmod headers && a2enmod proxy && service apache2 restart
+  - git clone https://github.com/jelledruyts/InspectorGadget /var/www/InspectorGadget
+  - mv /var/www/InspectorGadget/WebApp /var/www/ && rm -rf /var/www/InspectorGadget
+  - cd /etc/systemd/system/ && curl -O https://raw.githubusercontent.com/wshamroukh/apache-aspdotnet/refs/heads/main/inspectorg.service
+  - systemctl enable inspectorg && systemctl start inspectorg && systemctl restart inspectorg
+  - a2enmod proxy_http && service apache2 restart
 EOF
 
 # Resource Groups
